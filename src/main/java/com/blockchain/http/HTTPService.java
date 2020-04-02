@@ -81,7 +81,9 @@ public class HTTPService {
 		@Override
 		protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 			resp.setContentType("text/html;charset=UTF-8");
-			resp.getWriter().print("当前区块链：" + JSON.toJSONString(blockService.getBlockChain()));
+			req.setAttribute("data", "当前区块链：" + JSON.toJSONString(blockService.getBlockChain()));
+			req.getRequestDispatcher("index.jsp").forward(req, resp); 
+			//resp.getWriter().print("当前区块链：" + JSON.toJSONString(blockService.getBlockChain()));
 		}
 	}
 
@@ -92,18 +94,24 @@ public class HTTPService {
 			String address = req.getParameter("address");
 			Wallet myWallet = blockService.getMyWalletMap().get(address);
 			if (myWallet == null) {
-				resp.getWriter().print("挖矿指定的钱包不存在");
+				req.setAttribute("data", "挖矿指定的钱包不存在");
+				req.getRequestDispatcher("index.jsp").forward(req, resp); 
+				//resp.getWriter().print("挖矿指定的钱包不存在");
 				return;
 			}
 			Block newBlock = blockService.mine(address);
 			if (newBlock == null) {
-				resp.getWriter().print("挖矿失败，可能有其他节点已挖出该区块");
+				req.setAttribute("data","挖矿失败，可能有其他节点已挖出该区块");
+				req.getRequestDispatcher("index.jsp").forward(req, resp); 
+				//resp.getWriter().print("挖矿失败，可能有其他节点已挖出该区块");
 				return;
 			}
 			Block[] blocks = {newBlock};
 			String msg = JSON.toJSONString(new Message(P2PService.RESPONSE_BLOCKCHAIN, JSON.toJSONString(blocks)));
 			p2pService.broatcast(msg);
-			resp.getWriter().print("挖矿生成的新区块：" + JSON.toJSONString(newBlock));
+			req.setAttribute("data","挖矿生成的新区块：" + JSON.toJSONString(newBlock));
+			req.getRequestDispatcher("index.jsp").forward(req, resp); 
+			//resp.getWriter().print("挖矿生成的新区块：" + JSON.toJSONString(newBlock));
 		}
 	}
 
@@ -115,7 +123,9 @@ public class HTTPService {
 			Wallet[] wallets = {new Wallet(wallet.getPublicKey())}; 
 			String msg = JSON.toJSONString(new Message(P2PService.RESPONSE_WALLET, JSON.toJSONString(wallets)));
 			p2pService.broatcast(msg);
-			resp.getWriter().print("创建钱包成功，钱包地址： " + wallet.getAddress());
+			req.setAttribute("data","创建钱包成功，钱包地址： " + wallet.getAddress());
+			req.getRequestDispatcher("index.jsp").forward(req, resp); 
+			//resp.getWriter().print("创建钱包成功，钱包地址： " + wallet.getAddress());
 		}
 	}
 
@@ -123,7 +133,9 @@ public class HTTPService {
 		@Override
 		protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 			resp.setContentType("text/html;charset=UTF-8");
-			resp.getWriter().print("当前节点钱包：" + JSON.toJSONString(blockService.getMyWalletMap().values()));
+			req.setAttribute("data","当前节点钱包：" + JSON.toJSONString(blockService.getMyWalletMap().values()));
+			req.getRequestDispatcher("index.jsp").forward(req, resp); 
+			//resp.getWriter().print("当前节点钱包：" + JSON.toJSONString(blockService.getMyWalletMap().values()));
 		}
 	}
 
@@ -141,17 +153,23 @@ public class HTTPService {
 				recipientWallet = blockService.getOtherWalletMap().get(recipient);
 			}
 			if (senderWallet == null || recipientWallet == null) {
-				resp.getWriter().print("钱包不存在");
+				req.setAttribute("data","钱包不存在");
+				req.getRequestDispatcher("index.jsp").forward(req, resp); 
+				//resp.getWriter().print("钱包不存在");
 				return;
 			}
 
 			Transaction newTransaction = blockService.createTransaction(senderWallet, recipientWallet,
 			        amount);
 			if (newTransaction == null) {
-				resp.getWriter().print(
-				        "钱包" + sender + "余额不足或该钱包找不到一笔等于" + amount + "BTC的UTXO");
+				req.setAttribute("data", "钱包" + sender + "余额不足或该钱包找不到一笔等于" + amount + "BTC的UTXO");
+				req.getRequestDispatcher("index.jsp").forward(req, resp); 
+				//resp.getWriter().print(
+				 //       "钱包" + sender + "余额不足或该钱包找不到一笔等于" + amount + "BTC的UTXO");
 			} else {
-				resp.getWriter().print("新生成交易：" + JSON.toJSONString(newTransaction));
+				req.setAttribute("data","新生成交易：" + JSON.toJSONString(newTransaction));
+				req.getRequestDispatcher("index.jsp").forward(req, resp);
+				//resp.getWriter().print("新生成交易：" + JSON.toJSONString(newTransaction));
 				Transaction[] txs = {newTransaction}; 
 				String msg = JSON.toJSONString(new Message(P2PService.RESPONSE_TRANSACTION, JSON
 				        .toJSONString(txs)));
@@ -165,7 +183,9 @@ public class HTTPService {
 		protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 			resp.setContentType("text/html;charset=UTF-8");
 			String address = req.getParameter("address");
-			resp.getWriter().print("钱包余额为：" + blockService.getWalletBalance(address) + "BTC");
+			req.setAttribute("data","钱包余额为：" + blockService.getWalletBalance(address) + "BTC");
+			req.getRequestDispatcher("index.jsp").forward(req, resp);
+			//resp.getWriter().print("钱包余额为：" + blockService.getWalletBalance(address) + "BTC");
 		}
 	}
 
@@ -175,7 +195,9 @@ public class HTTPService {
 			resp.setContentType("text/html;charset=UTF-8");
 			List<Transaction> transactions = new ArrayList<>(blockService.getAllTransactions());
 			transactions.removeAll(blockService.getPackedTransactions());
-			resp.getWriter().print("本节点未打包交易：" + JSON.toJSONString(transactions));
+			req.setAttribute("data","本节点未打包交易：" + JSON.toJSONString(transactions));
+			req.getRequestDispatcher("index.jsp").forward(req, resp);
+			//resp.getWriter().print("本节点未打包交易：" + JSON.toJSONString(transactions));
 		}
 	}
 	
@@ -185,7 +207,9 @@ public class HTTPService {
         	resp.setContentType("text/html;charset=UTF-8");
             for (WebSocket socket : p2pService.getSockets()) {
                 InetSocketAddress remoteSocketAddress = socket.getRemoteSocketAddress();
-                resp.getWriter().print(remoteSocketAddress.getHostName() + ":" + remoteSocketAddress.getPort() + "  ");
+                req.setAttribute("data",remoteSocketAddress.getHostName() + ":" + remoteSocketAddress.getPort() + "  ");
+    			req.getRequestDispatcher("index.jsp").forward(req, resp);
+                //resp.getWriter().print(remoteSocketAddress.getHostName() + ":" + remoteSocketAddress.getPort() + "  ");
             }
         }
     }

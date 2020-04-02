@@ -36,5 +36,8 @@
 <p><form action="peers" method="get">
 <input type="submit" value="查询所有socket节点">
 </form>
+<% String data=(String)request.getAttribute("data"); 
+out.print(data);
+%>
 </body>
 </html>
