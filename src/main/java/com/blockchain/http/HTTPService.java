@@ -131,12 +131,14 @@ public class HTTPService {
 		@Override
 		protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 			resp.setContentType("text/html;charset=UTF-8");
-			TransactionParam txParam = JSON.parseObject(getReqBody(req), TransactionParam.class);
-
-			Wallet senderWallet = blockService.getMyWalletMap().get(txParam.getSender());
-			Wallet recipientWallet = blockService.getMyWalletMap().get(txParam.getRecipient());
+			//TransactionParam txParam = JSON.parseObject(getReqBody(req), TransactionParam.class);
+			String sender = req.getParameter("sender");
+			String recipient = req.getParameter("recipient");
+			int amount = Integer.parseInt(req.getParameter("amount"));
+			Wallet senderWallet = blockService.getMyWalletMap().get(sender);
+			Wallet recipientWallet = blockService.getMyWalletMap().get(recipient);
 			if (recipientWallet == null) {
-				recipientWallet = blockService.getOtherWalletMap().get(txParam.getRecipient());
+				recipientWallet = blockService.getOtherWalletMap().get(recipient);
 			}
 			if (senderWallet == null || recipientWallet == null) {
 				resp.getWriter().print("钱包不存在");
@@ -144,10 +146,10 @@ public class HTTPService {
 			}
 
 			Transaction newTransaction = blockService.createTransaction(senderWallet, recipientWallet,
-			        txParam.getAmount());
+			        amount);
 			if (newTransaction == null) {
 				resp.getWriter().print(
-				        "钱包" + txParam.getSender() + "余额不足或该钱包找不到一笔等于" + txParam.getAmount() + "BTC的UTXO");
+				        "钱包" + sender + "余额不足或该钱包找不到一笔等于" + amount + "BTC的UTXO");
 			} else {
 				resp.getWriter().print("新生成交易：" + JSON.toJSONString(newTransaction));
 				Transaction[] txs = {newTransaction}; 
