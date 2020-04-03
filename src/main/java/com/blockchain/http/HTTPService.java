@@ -133,7 +133,7 @@ public class HTTPService {
 		@Override
 		protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 			resp.setContentType("text/html;charset=UTF-8");
-			req.setAttribute("data","当前节点钱包：" + JSON.toJSONString(blockService.getMyWalletMap().values()));
+			req.setAttribute("data","当前节点钱包：" + JSON.toJSONString(blockService.getMyWalletMap().keySet()));
 			req.getRequestDispatcher("index.jsp").forward(req, resp); 
 			//resp.getWriter().print("当前节点钱包：" + JSON.toJSONString(blockService.getMyWalletMap().values()));
 		}
@@ -205,12 +205,18 @@ public class HTTPService {
         @Override
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         	resp.setContentType("text/html;charset=UTF-8");
+        	String ports = "";
             for (WebSocket socket : p2pService.getSockets()) {
                 InetSocketAddress remoteSocketAddress = socket.getRemoteSocketAddress();
-                req.setAttribute("data",remoteSocketAddress.getHostName() + ":" + remoteSocketAddress.getPort() + "  ");
-    			req.getRequestDispatcher("index.jsp").forward(req, resp);
+                ports += remoteSocketAddress.getHostName() + ":" + remoteSocketAddress.getPort() + "  ";
                 //resp.getWriter().print(remoteSocketAddress.getHostName() + ":" + remoteSocketAddress.getPort() + "  ");
             }
+            if(ports=="") {
+            	req.setAttribute("data","暂时没有其他节点");
+            }else {
+            	req.setAttribute("data",ports);
+            }        
+            req.getRequestDispatcher("index.jsp").forward(req, resp);
         }
     }
     
