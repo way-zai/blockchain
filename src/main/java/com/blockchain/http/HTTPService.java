@@ -92,6 +92,7 @@ public class HTTPService {
 		protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 			resp.setContentType("text/html;charset=UTF-8");
 			String address = req.getParameter("address");
+			int score = Integer.parseInt(req.getParameter("score"));
 			Wallet myWallet = blockService.getMyWalletMap().get(address);
 			if (myWallet == null) {
 				req.setAttribute("data", "挖矿指定的钱包不存在");
@@ -99,7 +100,7 @@ public class HTTPService {
 				//resp.getWriter().print("挖矿指定的钱包不存在");
 				return;
 			}
-			Block newBlock = blockService.mine(address);
+			Block newBlock = blockService.mine(address,score);
 			if (newBlock == null) {
 				req.setAttribute("data","挖矿失败，可能有其他节点已挖出该区块");
 				req.getRequestDispatcher("index.jsp").forward(req, resp); 

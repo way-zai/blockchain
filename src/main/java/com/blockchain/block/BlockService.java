@@ -159,9 +159,17 @@ public class BlockService {
 	 * @return
 	 */
 	private boolean isValidHash(String hash) {
-		return hash.startsWith("00000");
+		return hash.startsWith("000")||hash.startsWith("0000")||hash.startsWith("00000");
 	}
-
+	private boolean isValidHashEasy(String hash) {
+		return hash.startsWith("000");
+	}
+	private boolean isValidHashMedium(String hash) {
+		return hash.startsWith("0000");
+	}	
+	private boolean isValidHashHard(String hash) {
+		return hash.startsWith("00000");
+	}	
 	/**
 	 * 计算区块的hash
 	 * 
@@ -179,7 +187,7 @@ public class BlockService {
 	 * 
 	 * @return
 	 */
-	public Block mine(String toAddress) {
+	public Block mine(String toAddress,int score) {
 		// 创建系统奖励的交易
 		allTransactions.add(newCoinbaseTx(toAddress));
 		// 去除已打包进区块的交易
@@ -195,11 +203,26 @@ public class BlockService {
 			// 计算新区块hash值
 			newBlockHash = calculateHash(getLatestBlock().getHash(), blockTxs, nonce);
 			// 校验hash值
-			if (isValidHash(newBlockHash)) {
-				System.out.println("挖矿完成，正确的hash值：" + newBlockHash);
-				System.out.println("挖矿耗费时间：" + (System.currentTimeMillis() - start) + "ms");
-				break;
+			if(score>20) {
+				if (isValidHashEasy(newBlockHash)) {
+					System.out.println("挖矿完成，正确的hash值：" + newBlockHash);
+					System.out.println("挖矿耗费时间：" + (System.currentTimeMillis() - start) + "ms");
+					break;
+				}
+			}else if(score>10) {
+				if (isValidHashMedium(newBlockHash)) {
+					System.out.println("挖矿完成，正确的hash值：" + newBlockHash);
+					System.out.println("挖矿耗费时间：" + (System.currentTimeMillis() - start) + "ms");
+					break;
+				}
+			}else {
+				if (isValidHashHard(newBlockHash)) {
+					System.out.println("挖矿完成，正确的hash值：" + newBlockHash);
+					System.out.println("挖矿耗费时间：" + (System.currentTimeMillis() - start) + "ms");
+					break;
+				}
 			}
+			
 			System.out.println("错误的hash值：" + newBlockHash);
 			nonce++;
 		}

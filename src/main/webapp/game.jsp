@@ -141,7 +141,7 @@
 		}
 		
 		jsOkBtn.onclick = function() {
-			window.location.href = "mine?address="+document.getElementById("address").value;//刷新页面
+			window.location.href = "mine?score="+score+"&address="+document.getElementById("address").value;//刷新页面
 		}
 		
 	</script>
