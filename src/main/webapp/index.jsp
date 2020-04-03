@@ -10,7 +10,7 @@
 <style>
 body
 {	color:white;
-	background-image:url(/images/background.jpg);
+	background-image:url(/img/background.jpg);
 	background-repeat:norepeat;
 	background-size:100% 100%;
 	background-attachment: fixed;
@@ -77,7 +77,7 @@ input[type=submit] {
 <form action="peers" method="get">
 <input type="submit" value="查询所有socket节点">
 </form>
-<form action="mine" method="post">
+<form action="game.jsp" method="get">
 请输入要挖矿的钱包地址：<br><input type="text" name="address"><br>
 <input type="submit" value="挖矿">
 </form>

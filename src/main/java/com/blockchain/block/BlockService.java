@@ -159,7 +159,7 @@ public class BlockService {
 	 * @return
 	 */
 	private boolean isValidHash(String hash) {
-		return hash.startsWith("0000");
+		return hash.startsWith("00000");
 	}
 
 	/**
