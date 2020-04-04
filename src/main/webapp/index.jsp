@@ -87,15 +87,9 @@ input[type=submit] {
 请输入要转账的金额: <br><input type="text" name="amount"><br>
 <input type="submit" value="转账">
 </form>
-<form action="unpackedtransactions" method="get">
-<input type="submit" value="查询未打包交易">
-</form>
 <form action="walletbalance" method="get">
 请输入要查询的钱包地址：<br><input type="text" name="address"><br>
 <input type="submit" value="查询钱包余额">
-</form>
-<form action="peers" method="get">
-<input type="submit" value="查询所有socket节点">
 </form>
 </div>
 </body>

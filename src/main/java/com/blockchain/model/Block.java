@@ -33,12 +33,16 @@ public class Block {
 	 * 前一个区块的hash值
 	 */
 	private String previousHash;
-
+	/**
+	 * 游戏所得的分数
+	 */
+	private int score;
+	
 	public Block() {
 		super();
 	}
 
-	public Block(int index, long timestamp, List<Transaction> transactions, int nonce, String previousHash, String hash) {
+	public Block(int index, long timestamp, List<Transaction> transactions, int nonce, String previousHash, String hash,int score) {
 		super();
 		this.index = index;
 		this.timestamp = timestamp;
@@ -46,6 +50,7 @@ public class Block {
 		this.nonce = nonce;
 		this.previousHash = previousHash;
 		this.hash = hash;
+		this.score = score;
 	}
 
 	public int getIndex() {
@@ -95,4 +100,13 @@ public class Block {
 	public void setHash(String hash) {
 		this.hash = hash;
 	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+	
 }

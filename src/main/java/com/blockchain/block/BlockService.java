@@ -49,7 +49,7 @@ public class BlockService {
 
 	public BlockService() {
 		// 新建创始区块
-		Block genesisBlock = new Block(1, System.currentTimeMillis(), new ArrayList<Transaction>(), 1, "1", "1");
+		Block genesisBlock = new Block(1, System.currentTimeMillis(), new ArrayList<Transaction>(), 1, "1", "1",1);
 		blockChain.add(genesisBlock);
 		System.out.println("生成创始区块：" + JSON.toJSONString(genesisBlock));
 	}
@@ -91,7 +91,7 @@ public class BlockService {
 			return false;
 		} else {
 			// 验证新区块hash值的正确性
-			String hash = calculateHash(newBlock.getPreviousHash(), newBlock.getTransactions(), newBlock.getNonce());
+			String hash = calculateHash(newBlock.getPreviousHash(), newBlock.getTransactions(), newBlock.getNonce(),newBlock.getScore());
 			if (!hash.equals(newBlock.getHash())) {
 				System.out.println("新区块的hash无效: " + hash + " " + newBlock.getHash());
 				return false;
@@ -144,8 +144,8 @@ public class BlockService {
 		}
 	}
 
-	private Block createNewBlock(int nonce, String previousHash, String hash, List<Transaction> blockTxs) {
-		Block block = new Block(blockChain.size() + 1, System.currentTimeMillis(), blockTxs, nonce, previousHash, hash);
+	private Block createNewBlock(int nonce, String previousHash, String hash, List<Transaction> blockTxs,int score) {
+		Block block = new Block(blockChain.size() + 1, System.currentTimeMillis(), blockTxs, nonce, previousHash, hash,score);
 		if (addBlock(block)) {
 			return block;
 		}
@@ -178,8 +178,8 @@ public class BlockService {
 	 * @param nonce
 	 * @return
 	 */
-	private String calculateHash(String previousHash, List<Transaction> currentTransactions, int nonce) {
-		return CryptoUtil.SHA256(previousHash + JSON.toJSONString(currentTransactions) + nonce);
+	private String calculateHash(String previousHash, List<Transaction> currentTransactions, int nonce,int score) {
+		return CryptoUtil.SHA256(previousHash + JSON.toJSONString(currentTransactions) + nonce+score);
 	}
 
 	/**
@@ -201,7 +201,7 @@ public class BlockService {
 		System.out.println("开始挖矿");
 		while (true) {
 			// 计算新区块hash值
-			newBlockHash = calculateHash(getLatestBlock().getHash(), blockTxs, nonce);
+			newBlockHash = calculateHash(getLatestBlock().getHash(), blockTxs, nonce,score);
 			// 校验hash值
 			if(score>20) {
 				if (isValidHashEasy(newBlockHash)) {
@@ -228,7 +228,7 @@ public class BlockService {
 		}
 
 		// 创建新的区块
-		Block block = createNewBlock(nonce, getLatestBlock().getHash(), newBlockHash, blockTxs);
+		Block block = createNewBlock(nonce, getLatestBlock().getHash(), newBlockHash, blockTxs,score);
 		return block;
 	}
 
